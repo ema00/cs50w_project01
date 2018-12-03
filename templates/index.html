@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+
+{% block title %}
+    Book review
+{% endblock %}
+
+
+{% block home_anchor %}
+    <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
+{% endblock %}
+
+
+{% block actions_anchors %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index') }}">Profile</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index') }}">Logout</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index') }}">About</a>
+    </li>
+{% endblock %}
+
+
+{% block form_search %}
+    <form id="search_nav" class="form-inline my-2 my-lg-0" action="{{ url_for('search') }}" method="post">
+        <input class="form-control mr-sm-2" size="30%" type="search" placeholder="Title | Author | ISBN" name="book">
+        <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
+    </form>
+{% endblock %}
+
+
+{% block content %}
+{% endblock %}

@@ -1,0 +1,41 @@
+/*
+body {
+  background-color: red;
+}
+*/
+
+.jumbotron {
+   padding: 4%;
+}
+
+.hero {
+    background-image: url('../images/old-books.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.hero-title {
+    color: white;
+    background: black;
+    text-align: center;
+}
+
+/*
+.page-header {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+*/
+
+.page-header::before,
+.page-header::after {
+    content: "";
+    border: solid gray;
+    border-width: 0.05em 0;
+    height: 0.1em;
+    margin: 0.2em;
+    flex: 1;
+}
