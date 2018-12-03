@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+
+{% block title %}
+    Book review
+{% endblock %}
+
+
+{% block home_anchor %}
+    <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
+{% endblock %}
+
+
+{% block actions_anchors %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index') }}">About</a>
+    </li>
+{% endblock %}
+
+
+{% block form_search %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="container text-center">
+
+        <h3 class="text-white">Login</h3>
+
+        <form id="search_nav" class="my-2 my-lg-0" action="{{ url_for('search') }}" method="post">
+
+          <div class="form-row justify-content-center">
+            <div class="col-md-4 mb-3">
+              <label for="input_username" class="text-white">Username</label>
+              <input type="text" class="form-control" id="input_username" placeholder="Username" name="username">
+            </div>
+          </div>
+
+          <div class="form-row justify-content-center">
+            <div class="col-md-4 mb-3">
+              <label for="input_password" class="text-white">Password</label>
+              <input type="password" class="form-control" id="input_password" placeholder="Password" name="password">
+            </div>
+          </div>
+
+          <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Send</button>
+
+        </form>
+
+    </div>
+{% endblock %}

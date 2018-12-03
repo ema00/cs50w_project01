@@ -32,3 +32,8 @@ def search():
     book_data = request.form.get("book")
     # Redirect home, for now...
     return redirect("/")
+
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
