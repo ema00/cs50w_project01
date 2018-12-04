@@ -5,7 +5,9 @@ from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
+
 app = Flask(__name__)
+
 """
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -34,6 +36,20 @@ def search():
     return redirect("/")
 
 
-@app.route("/login")
-def login():
-    return render_template("login.html")
+@app.route("/login", methods=["GET"])
+def login_get():
+    return render_template("login.html", message = None)
+
+
+@app.route("/login", methods=["POST"])
+def login_post():
+    username = str(request.form.get("username"))
+    password = str(request.form.get("password"))
+    if user_credentials_ok(username, password):
+        return redirect("/")
+    else:
+        return render_template("login.html", message="User credentials not valid.")
+
+
+def user_credentials_ok(username, password):
+    return username == "user" and password == "pass"
