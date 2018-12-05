@@ -27,10 +27,22 @@
 {% block form_search %}
     <form id="search_nav" class="form-inline my-2 my-lg-0" action="{{ url_for('search') }}" method="post">
         <input class="form-control mr-sm-2" size="30%" type="search" placeholder="Title | Author | ISBN" name="book">
-        <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
+        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
     </form>
 {% endblock %}
 
 
 {% block content %}
+    <div class="container text-center">
+        <form class="my-2 my-lg-0" action="{{ url_for('search') }}" method="post">
+          <div class="form-row justify-content-center">
+            <div class="col-md-6 mb-3">
+              <label for="input_book" class="text-white">Search books by title, author or ISBN</label>
+              <input type="text" class="form-control" id="input_book" placeholder="Title | Author | ISBN" name="book">
+            </div>
+          </div>
+
+          <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
 {% endblock %}
