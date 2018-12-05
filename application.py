@@ -32,7 +32,7 @@ def index():
 def search():
     # Get form information.
     book_data = request.form.get("book")
-    # Redirect home, for now...
+    # FOR NOW, JUST REDIRECT TO INDEX
     return redirect("/")
 
 
@@ -49,6 +49,18 @@ def login_post():
         return redirect("/")
     else:
         return render_template("login.html", message="User credentials not valid.")
+
+
+@app.route("/register", methods=["GET"])
+def register_get():
+    # FOR NOW, JUST REDIRECT TO INDEX
+    return redirect("/")
+
+
+@app.route("/register", methods=["POST"])
+def register_post():
+    # FOR NOW, JUST REDIRECT TO INDEX
+    return redirect("/")
 
 
 def user_credentials_ok(username, password):
