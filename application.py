@@ -53,14 +53,16 @@ def login_post():
 
 @app.route("/register", methods=["GET"])
 def register_get():
-    # FOR NOW, JUST REDIRECT TO INDEX
-    return redirect("/")
+    return render_template("register.html", message = None)
 
 
 @app.route("/register", methods=["POST"])
 def register_post():
-    # FOR NOW, JUST REDIRECT TO INDEX
-    return redirect("/")
+    username = str(request.form.get("username"))
+    password1 = str(request.form.get("password1"))
+    password2 = str(request.form.get("password2"))
+    # FOR NOW, JUST RENDER THIS SAME TEMPLATE
+    return render_template("register.html", message="User data not valid.")
 
 
 def user_credentials_ok(username, password):

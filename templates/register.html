@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+
+
+{% block title %}
+    Book review
+{% endblock %}
+
+
+{% block home_anchor %}
+    <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
+{% endblock %}
+
+
+{% block actions_anchors %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index') }}">About</a>
+    </li>
+{% endblock %}
+
+
+{% block form_search %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="container text-center">
+
+        {% if message != "" and message != None %}
+            <div class="alert alert-warning pt-1 pb-1" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+
+        <h4 class="text-white">Register User</h4>
+
+        <form class="my-2 my-lg-0" action="{{ url_for('register_post') }}" method="post">
+
+          <div class="form-row justify-content-center">
+            <div class="col-md-3 mb-3">
+              <label for="input_username" class="text-white">Username</label>
+              <input type="text" class="form-control" id="input_username" placeholder="Username" name="username">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="input_email" class="text-white">e-mail</label>
+              <input type="email" class="form-control" id="input_email" placeholder="e-mail" name="email">
+            </div>
+          </div>
+
+          <div class="form-row justify-content-center">
+            <div class="col-md-3 mb-3">
+              <label for="input_password1" class="text-white">Enter Password</label>
+              <input type="password" class="form-control" id="input_password1" placeholder="Password" name="password1">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="input_password2" class="text-white">Re-enter Password</label>
+              <input type="password" class="form-control" id="input_password2" placeholder="Password" name="password2">
+            </div>
+          </div>
+
+          <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Send</button>
+
+        </form>
+
+    </div>
+{% endblock %}
