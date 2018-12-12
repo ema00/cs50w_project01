@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+
+{% block title %}
+    Book review
+{% endblock %}
+
+
+{% block home_anchor %}
+    <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
+{% endblock %}
+
+
+{% block actions_anchors %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index') }}">Logout</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index') }}">About</a>
+    </li>
+{% endblock %}
+
+
+{% block form_search %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="container text-center">
+
+        <h4 class="text-white mb-4">User Profile</h4>
+
+          <div class="form-row justify-content-center">
+            <div class="col-md-3 mb-4">
+              <label for="txt_username" class="text-white">Username</label>
+            </div>
+            <div class="col-md-3 mb-4">
+              <label for="username" class="text-white">username</label>
+            </div>
+          </div>
+          <div class="form-row justify-content-center">
+            <div class="col-md-3 mb-4">
+              <label for="txt_email" class="text-white">e-mail</label>
+            </div>
+            <div class="col-md-3 mb-4">
+              <label for="email" class="text-white">email</label>
+            </div>
+          </div>
+
+          <div class="mt-3">
+              <a href="{{ url_for('index') }}">Home</a>
+          </div>
+
+    </div>
+{% endblock %}

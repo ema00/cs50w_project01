@@ -65,5 +65,11 @@ def register_post():
     return render_template("register.html", message="User data not valid.")
 
 
+@app.route("/profile", methods=["GET"])
+def profile():
+    # FOR NOW, JUST RENDER A MOCK TEMPLATE
+    return render_template("profile.html", username = "USER", email = "usermail@usermail.com")
+
+
 def user_credentials_ok(username, password):
     return username == "user" and password == "pass"
