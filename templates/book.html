@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+
+{% block title %}
+    Book review
+{% endblock %}
+
+
+{% block home_anchor %}
+    <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
+{% endblock %}
+
+
+{% block actions_anchors %}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index') }}">Logout</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index') }}">About</a>
+    </li>
+{% endblock %}
+
+
+{% block form_search %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="container text-center text-white">
+        <h2 class="page-header">Book: {{ title }}</h2>
+        <h3>Author: {{ author }}</h3>
+        <h5>ISBN: {{ isbn }}</h5>
+    </div>
+
+    <div class="container mt-4 text-white">
+      <h4 class="text-center align-middle">Review ratings</h4>
+
+      <div class="row">
+        <div class="col-6 text-center align-middle">
+          <h4>Book review</h4>
+          <div>
+            <h5>
+              {{ rating }}
+            </h5>
+            <p>{{ num_revs }} reviews</p>
+          </div>
+        </div>
+        <div class="col-6 text-center align-middle">
+          <h4>Good Reads</h4>
+          <div>
+            <h5>
+              {{ rating_good_reads }}
+            </h5>
+            <p>{{ num_revs_good_reads }} reviews</p>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

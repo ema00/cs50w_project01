@@ -36,6 +36,15 @@ def search():
     return redirect("/")
 
 
+@app.route("/book", methods=["GET"])
+def book():
+    # FOR NOW, JUST RENDER A MOCK TEMPLATE
+    return render_template("book.html", title = "Un Libro Más",
+                            author = "Pérez, Juan Carlos", isbn = "123456789",
+                            rating = 3.00, rating_good_reads = 5.00,
+                            num_revs = 2, num_revs_good_reads = 300)
+
+
 @app.route("/login", methods=["GET"])
 def login_get():
     return render_template("login.html", message = None)
@@ -48,7 +57,7 @@ def login_post():
     if user_credentials_ok(username, password):
         return redirect("/")
     else:
-        return render_template("login.html", message="User credentials not valid.")
+        return render_template("login.html", message = "User credentials not valid.")
 
 
 @app.route("/register", methods=["GET"])
