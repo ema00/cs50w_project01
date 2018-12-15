@@ -5,6 +5,10 @@ from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
+from books import *
+
+
+init_books_data()
 
 app = Flask(__name__)
 
@@ -39,8 +43,9 @@ def search():
 @app.route("/book", methods=["GET"])
 def book():
     # FOR NOW, JUST RENDER A MOCK TEMPLATE
-    return render_template("book.html", title = "Un Libro Más",
-                            author = "Pérez, Juan Carlos", isbn = "123456789",
+    book = get_book_by_isbn("0380795272")
+    return render_template("book.html", title = book.title,
+                            author = book.author, isbn = book.isbn,
                             rating = 3.00, rating_good_reads = 5.00,
                             num_revs = 2, num_revs_good_reads = 300)
 
