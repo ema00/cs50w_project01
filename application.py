@@ -9,25 +9,30 @@ from books import *
 from users import *
 
 
-init_books_data()
-init_users_data()
-
 app = Flask(__name__)
 
-"""
-# Check for environment variable
-if not os.getenv("DATABASE_URL"):
-    raise RuntimeError("DATABASE_URL is not set")
 
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+
+# Initialize mock data instead of database, until database is ready
+init_books_data()
+init_users_data()
+
+
+"""
+# Check for environment variable
+if not os.getenv("DATABASE_URL"):
+    raise RuntimeError("DATABASE_URL is not set")
+
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 """
+
 
 @app.route("/")
 def index():
@@ -59,12 +64,19 @@ def login_get():
 def login_post():
     username = str(request.form.get("username"))
     password = str(request.form.get("password"))
-    user = get_user(username, password)
-    if user != None:
+    user = get_user(username)
+    if user != None and credentials_ok(username, password):
+        login(user)
         return redirect("/")
     else:
         return render_template("login.html",
             message = "User credentials not valid.")
+
+
+@app.route("/logout", methods=["POST"])
+def logout_user():
+    logout()
+    return redirect("/")
 
 
 @app.route("/register", methods=["GET"])
@@ -78,17 +90,41 @@ def register_post():
     password = str(request.form.get("password1"))
     password_reenter = str(request.form.get("password2"))
     email = str(request.form.get("email"))
-    user = get_user(username, password)
+    user = get_user(username)
     if (password == password_reenter) and (user is None):
-        user = User(username, password, email)
-        add_user(user)
+        user = User(username, email)
+        add_user_and_pass(user, password)
         return redirect("/")
     else:
-        return render_template("register.html", message="User data not valid.")
+        return render_template("register.html",
+            message="User data not valid.")
 
 
 @app.route("/profile", methods=["GET"])
 def profile():
-    # FOR NOW, JUST RENDER A MOCK TEMPLATE
-    return render_template("profile.html", username = "USER",
-        email = "usermail@usermail.com")
+    user = get_user(session["user_id"])
+    return render_template("profile.html", username = user.username,
+        email = user.email)
+
+
+# Helper functions ###########################################################
+
+"""
+Logs a user in, using the session cookie.
+"""
+def login(user):
+    session["user_id"] = user.username
+
+
+"""
+Logs a user out, using the session cookie.
+"""
+def logout():
+    session["user_id"] = ""
+
+
+"""
+Checks if any user is currently logged in.
+"""
+def is_user_logged_in():
+    return session["user_id"] != ""
