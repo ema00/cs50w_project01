@@ -35,8 +35,8 @@ def init_books_data():
 
 
 """
-Returns a Book object if the ISBN passed as argument corresponds to one of
-the books in the books dictionary.
+Returns a Book object if the ISBN passed as argument corresponds to one of the
+books in the books dictionary.
 """
 def get_book_by_isbn(isbn):
     if isbn in books.keys():

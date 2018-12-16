@@ -6,9 +6,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 from books import *
+from users import *
 
 
 init_books_data()
+init_users_data()
 
 app = Flask(__name__)
 
@@ -42,12 +44,10 @@ def search():
 
 @app.route("/book", methods=["GET"])
 def book():
-    # FOR NOW, JUST RENDER A MOCK TEMPLATE
     book = get_book_by_isbn("0380795272")
     return render_template("book.html", title = book.title,
-                            author = book.author, isbn = book.isbn,
-                            rating = 3.00, rating_good_reads = 5.00,
-                            num_revs = 2, num_revs_good_reads = 300)
+        author = book.author, isbn = book.isbn, rating = 3.00,
+        rating_good_reads = 5.00, num_revs = 2, num_revs_good_reads = 300)
 
 
 @app.route("/login", methods=["GET"])
@@ -59,10 +59,12 @@ def login_get():
 def login_post():
     username = str(request.form.get("username"))
     password = str(request.form.get("password"))
-    if user_credentials_ok(username, password):
+    user = get_user(username, password)
+    if user != None:
         return redirect("/")
     else:
-        return render_template("login.html", message = "User credentials not valid.")
+        return render_template("login.html",
+            message = "User credentials not valid.")
 
 
 @app.route("/register", methods=["GET"])
@@ -73,16 +75,23 @@ def register_get():
 @app.route("/register", methods=["POST"])
 def register_post():
     username = str(request.form.get("username"))
-    password1 = str(request.form.get("password1"))
-    password2 = str(request.form.get("password2"))
-    # FOR NOW, JUST RENDER THIS SAME TEMPLATE
-    return render_template("register.html", message="User data not valid.")
+    password = str(request.form.get("password1"))
+    password_reenter = str(request.form.get("password2"))
+    email = str(request.form.get("email"))
+    user = get_user(username, password)
+    if (password == password_reenter) and (user is None):
+        user = User(username, password, email)
+        add_user(user)
+        return redirect("/")
+    else:
+        return render_template("register.html", message="User data not valid.")
 
 
 @app.route("/profile", methods=["GET"])
 def profile():
     # FOR NOW, JUST RENDER A MOCK TEMPLATE
-    return render_template("profile.html", username = "USER", email = "usermail@usermail.com")
+    return render_template("profile.html", username = "USER",
+        email = "usermail@usermail.com")
 
 
 def user_credentials_ok(username, password):
