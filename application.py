@@ -92,7 +92,3 @@ def profile():
     # FOR NOW, JUST RENDER A MOCK TEMPLATE
     return render_template("profile.html", username = "USER",
         email = "usermail@usermail.com")
-
-
-def user_credentials_ok(username, password):
-    return username == "user" and password == "pass"
