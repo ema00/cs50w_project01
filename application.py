@@ -60,8 +60,7 @@ def book():
     # SHOW A SAMPLE BOOK, FOR NOW
     book = get_book_by_isbn("0380795272")
     return render_template("book.html", user_logged_in = is_user_logged_in(),
-        title = book.title, author = book.author, isbn = book.isbn,
-        rating = 3.00, rating_good_reads = 5.00, num_revs = 2,
+        book = book, rating = 3.00, rating_good_reads = 5.00, num_revs = 2,
         num_revs_good_reads = 300)
 
 
@@ -123,8 +122,8 @@ def profile():
     if not is_user_logged_in():
         return redirect("/")
     user = get_user(session[USER_ID])
-    return render_template("profile.html", username = user.username,
-        user_logged_in = is_user_logged_in(), email = user.email)
+    return render_template("profile.html", user = user,
+        user_logged_in = is_user_logged_in())
 
 
 # Helper functions ###########################################################
