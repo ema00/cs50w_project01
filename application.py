@@ -141,6 +141,7 @@ def logout():
 Checks if any user is currently logged in.
 """
 def is_user_logged_in():
+    check_user_id_session()
     return session[USER_ID] != ""
 
 
