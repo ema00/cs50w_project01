@@ -35,6 +35,8 @@
               <div class="collapse navbar-collapse" id="navbar_toggler">
 
                   <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    {# Links for other views, some only available when user is logged in #}
+
                     {% block actions_anchors %}
 
                       {% if user_logged_in %}
@@ -49,7 +51,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('index') }}">About</a>
                         </li>
-                        
+
                     {% endblock %}
                   </ul>
 
