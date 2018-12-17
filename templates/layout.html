@@ -24,7 +24,10 @@
       <nav class="navbar navbar-expand-lg navbar-dark">
           <div class="container">
 
-              {% block home_anchor %}{% endblock %}
+              {% block home_anchor %}
+                  <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
+              {% endblock %}
+
 
               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_toggler" aria-controls="navbar_toggler" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
