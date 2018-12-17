@@ -36,12 +36,14 @@ def init_users_data():
     users["gerbaudoari"] = ["arielger@gmail.com"]
     users["davidm"] = ["miguens01@gmail.com"]
     users["javito"] = ["joter@gmail.com"]
+    users["ddd"] = ["ddd@gmail.com"]
     # Init users passwords
     passwords["gonzalezjuan"] = "gona"
     passwords["perezj"] = "pejo"
     passwords["gerbaudoari"] = "arij"
     passwords["davidm"] = "davi"
     passwords["javito"] = "jaot"
+    passwords["ddd"] = "eee"
 
 
 """

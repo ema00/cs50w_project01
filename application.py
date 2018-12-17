@@ -9,6 +9,10 @@ from books import *
 from users import *
 
 
+# Flask Session key for holding the user ID of the user currently logged in
+USER_ID = "user_id"
+
+
 app = Flask(__name__)
 
 
@@ -36,7 +40,10 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    if is_user_logged_in():
+        return render_template("index.html")
+    else:
+        return redirect("/login")
 
 
 @app.route("/search", methods=["POST"])
@@ -65,15 +72,18 @@ def login_post():
     username = str(request.form.get("username"))
     password = str(request.form.get("password"))
     user = get_user(username)
-    if user != None and credentials_ok(username, password):
-        login(user)
-        return redirect("/")
+    if not is_user_logged_in():
+        if credentials_ok(username, password):
+            login(user)
+            return redirect("/")
+        else:
+            return render_template("login.html",
+                message = "User credentials not valid.")
     else:
-        return render_template("login.html",
-            message = "User credentials not valid.")
+        return redirect("/")
 
 
-@app.route("/logout", methods=["POST"])
+@app.route("/logout", methods=["GET"])
 def logout_user():
     logout()
     return redirect("/")
@@ -94,6 +104,7 @@ def register_post():
     if (password == password_reenter) and (user is None):
         user = User(username, email)
         add_user_and_pass(user, password)
+        login(user)
         return redirect("/")
     else:
         return render_template("register.html",
@@ -102,7 +113,9 @@ def register_post():
 
 @app.route("/profile", methods=["GET"])
 def profile():
-    user = get_user(session["user_id"])
+    if not is_user_logged_in():
+        return redirect("/")
+    user = get_user(session[USER_ID])
     return render_template("profile.html", username = user.username,
         email = user.email)
 
@@ -113,18 +126,27 @@ def profile():
 Logs a user in, using the session cookie.
 """
 def login(user):
-    session["user_id"] = user.username
+    check_user_id_session()
+    session[USER_ID] = user.username
 
 
 """
 Logs a user out, using the session cookie.
 """
 def logout():
-    session["user_id"] = ""
+    session[USER_ID] = ""
 
 
 """
 Checks if any user is currently logged in.
 """
 def is_user_logged_in():
-    return session["user_id"] != ""
+    return session[USER_ID] != ""
+
+
+"""
+Initializes the Session key that holds the user currently logged in.
+"""
+def check_user_id_session():
+    if not USER_ID in session:
+        session[USER_ID] = ""
