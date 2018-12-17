@@ -41,7 +41,8 @@ db = scoped_session(sessionmaker(bind=engine))
 @app.route("/")
 def index():
     if is_user_logged_in():
-        return render_template("index.html")
+        return render_template("index.html",
+            user_logged_in = is_user_logged_in())
     else:
         return redirect("/login")
 
@@ -56,15 +57,18 @@ def search():
 
 @app.route("/book", methods=["GET"])
 def book():
+    # SHOW A SAMPLE BOOK, FOR NOW
     book = get_book_by_isbn("0380795272")
-    return render_template("book.html", title = book.title,
-        author = book.author, isbn = book.isbn, rating = 3.00,
-        rating_good_reads = 5.00, num_revs = 2, num_revs_good_reads = 300)
+    return render_template("book.html", user_logged_in = is_user_logged_in(),
+        title = book.title, author = book.author, isbn = book.isbn,
+        rating = 3.00, rating_good_reads = 5.00, num_revs = 2,
+        num_revs_good_reads = 300)
 
 
 @app.route("/login", methods=["GET"])
 def login_get():
-    return render_template("login.html", message = None)
+    return render_template("login.html", user_logged_in = is_user_logged_in(),
+        message = None)
 
 
 @app.route("/login", methods=["POST"])
@@ -78,6 +82,7 @@ def login_post():
             return redirect("/")
         else:
             return render_template("login.html",
+                user_logged_in = is_user_logged_in(),
                 message = "User credentials not valid.")
     else:
         return redirect("/")
@@ -91,7 +96,8 @@ def logout_user():
 
 @app.route("/register", methods=["GET"])
 def register_get():
-    return render_template("register.html", message = None)
+    return render_template("register.html",
+        user_logged_in = is_user_logged_in(), message = None)
 
 
 @app.route("/register", methods=["POST"])
@@ -108,6 +114,7 @@ def register_post():
         return redirect("/")
     else:
         return render_template("register.html",
+            user_logged_in = is_user_logged_in(),
             message="User data not valid.")
 
 
@@ -117,7 +124,7 @@ def profile():
         return redirect("/")
     user = get_user(session[USER_ID])
     return render_template("profile.html", username = user.username,
-        email = user.email)
+        user_logged_in = is_user_logged_in(), email = user.email)
 
 
 # Helper functions ###########################################################

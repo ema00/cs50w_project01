@@ -6,19 +6,6 @@
 {% endblock %}
 
 
-{% block actions_anchors %}
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('logout_user') }}">Logout</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('index') }}">About</a>
-    </li>
-{% endblock %}
-
-
 {% block form_search %}
     <form id="search_nav" class="form-inline my-2 my-lg-0" action="{{ url_for('search') }}" method="post">
         <input class="form-control mr-sm-2" size="30%" type="search" placeholder="Title | Author | ISBN" name="book">
