@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, g, render_template, request, session, redirect
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -41,8 +41,7 @@ db = scoped_session(sessionmaker(bind=engine))
 @app.route("/")
 def index():
     if is_user_logged_in():
-        return render_template("index.html",
-            user_logged_in = is_user_logged_in())
+        return render_template("index.html")
     else:
         return redirect("/login")
 
@@ -59,15 +58,14 @@ def search():
 def book():
     # SHOW A SAMPLE BOOK, FOR NOW
     book = get_book_by_isbn("0380795272")
-    return render_template("book.html", user_logged_in = is_user_logged_in(),
+    return render_template("book.html",
         book = book, rating = 3.00, rating_good_reads = 5.00, num_revs = 2,
         num_revs_good_reads = 300)
 
 
 @app.route("/login", methods=["GET"])
 def login_get():
-    return render_template("login.html", user_logged_in = is_user_logged_in(),
-        message = None)
+    return render_template("login.html", message = None)
 
 
 @app.route("/login", methods=["POST"])
@@ -81,7 +79,6 @@ def login_post():
             return redirect("/")
         else:
             return render_template("login.html",
-                user_logged_in = is_user_logged_in(),
                 message = "User credentials not valid.")
     else:
         return redirect("/")
@@ -95,8 +92,7 @@ def logout_user():
 
 @app.route("/register", methods=["GET"])
 def register_get():
-    return render_template("register.html",
-        user_logged_in = is_user_logged_in(), message = None)
+    return render_template("register.html", message = None)
 
 
 @app.route("/register", methods=["POST"])
@@ -113,7 +109,6 @@ def register_post():
         return redirect("/")
     else:
         return render_template("register.html",
-            user_logged_in = is_user_logged_in(),
             message="User data not valid.")
 
 
@@ -122,17 +117,29 @@ def profile():
     if not is_user_logged_in():
         return redirect("/")
     user = get_user(session[USER_ID])
-    return render_template("profile.html", user = user,
-        user_logged_in = is_user_logged_in())
+    return render_template("profile.html")
 
 
 # Helper functions ###########################################################
 
 """
+Loads the user currently logged in. The information is taken from the session
+cookie. The global variable g is automatically passed to the template engine.
+This is executed before every request.
+"""
+@app.before_request
+def load_logged_in_user():
+    user_id = session.get(USER_ID)
+    if user_id:
+        g.user = get_user(user_id)
+    else:
+        g.user = None
+
+
+"""
 Logs a user in, using the session cookie.
 """
 def login(user):
-    check_user_id_session()
     session[USER_ID] = user.username
 
 
@@ -140,20 +147,11 @@ def login(user):
 Logs a user out, using the session cookie.
 """
 def logout():
-    session[USER_ID] = ""
+    session.clear()
 
 
 """
 Checks if any user is currently logged in.
 """
 def is_user_logged_in():
-    check_user_id_session()
-    return session[USER_ID] != ""
-
-
-"""
-Initializes the Session key that holds the user currently logged in.
-"""
-def check_user_id_session():
-    if not USER_ID in session:
-        session[USER_ID] = ""
+    return bool(session.get(USER_ID))
