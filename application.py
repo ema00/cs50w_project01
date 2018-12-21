@@ -5,8 +5,8 @@ from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from books import *
-from users import *
+from Book import *
+from User import *
 
 
 # Flask Session key for holding the user ID of the user currently logged in
