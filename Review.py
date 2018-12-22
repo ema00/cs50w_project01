@@ -35,6 +35,17 @@ reviews_goodreads = dict()
 
 
 """
+Initialization of mock data for reviews. This just calls the initialization
+functions for the mock data of Book Review webpage and Goodreads webpage.
+"""
+def init_reviews_data():
+    # Init mock data for reviews data from Book Review webpage
+    init_reviews_br_data()
+    # Init mock data for reviews data from Goodreads webpage
+    init_reviews_gr_data()
+
+
+"""
 Returns a Review object for the Book passed as argument, if the Book has a
 review in the reviews dictionaries.
 """
