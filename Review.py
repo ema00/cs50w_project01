@@ -2,6 +2,9 @@
 import datetime
 import json
 
+from Book import *
+from User import *
+
 
 # Minimum possible value of a review (number of stars) for Book Review web
 REVIEW_MIN = 0
@@ -50,24 +53,24 @@ Returns a Review object for the Book passed as argument, if the Book has a
 review in the reviews dictionaries.
 """
 def get_review_by_book(book):
-    isbn = book.isbn
-    return get_review_by_isbn(isbn)
-
-
-"""
-Returns a Review object for the Book whose ISBN is passed as argument, if the
-Book has a review in the reviews dictionaries.
-"""
-def get_review_by_isbn(isbn):
-    if isbn in reviews_bookreview.keys():
-        review_br = reviews_bookreview[isbn]
-    else:
-        review_br = None
+    review = Review(book, None)
+    # add Book Review reviews
+    if book.isbn in reviews_bookreview.keys():
+        # raw formatted (see reviews_bookreview dict)
+        reviews_data_by_user = reviews_bookreview[book.isbn]
+        for username reviews_data_by_user.keys():
+            user = get_user(username)
+            review_br = ReviewBookReview(book, user, rating, date)
+            review.add_review_br(review_br)
+    # add Goodreads review
     if book.isbn in reviews_goodreads.keys():
-        review_gr = reviews_goodreads[isbn]
-    else:
-        review_gr = None
-    return Review(book, review_br, review_gr)
+        # JSON formatted
+        review_gr_json = reviews_bookreview[isbn]
+        rating = review_gr_json["average_score"]
+        num_reviews = review_gr_json["review_count"]
+        review_gr = ReviewGoodreads(book, rating, num_reviews)
+        review.review_gr = review_gr
+    return review
 
 
 """
@@ -98,12 +101,12 @@ Represents the reviews of a Book, from both Book Review and Goodreads.
 """
 class Review():
 
-    def __init__(self, book, review_br, review_gr):
+    def __init__(self, book, review_gr):
         self.book = book
-        # Review from Book Review
-        self. = review_br
         # Review from Goodreads
-        self.review_gr = review_gr
+        self.__review_gr = review_gr
+        # Reviews from Book Review
+        self.__reviews_br = set()
 
     @property
     def book(self):
@@ -114,26 +117,121 @@ class Review():
         self.__book = book
 
     @property
-    def review_br(self):
-        return self.__review_br
-
-    @review_br.setter
-    def review_br(self, review_br):
-        if review_br is None:
-            self.__review_br = { self.book : list() }
-        else:
-            self.__review_br = review_br
-
-    @property
     def review_gr(self):
         return self.__review_gr
 
     @review_gr.setter
     def review_gr(self, review_gr):
-        if __review_gr is None:
-            self.__review_gr = { self.book : dict() }
+        self.__review_gr = review_gr
+
+    @property
+    def reviews_br(self):
+        return self.__review_br
+
+    def add_review_br(review_br):
+        if review_br is ReviewBookReview:
+            if review_br not in reviews_br:
+                self.__reviews_br.add(review_br)
+
+
+"""
+Class: ReviewBookReview
+Represents a review of a Book, from Book Review.
+"""
+class ReviewBookReview():
+
+    def __init__(self, book, user, rating, date):
+        self.__book = book
+        self.__isbn = book.isbn
+        self.__user = user
+        self.__date = date
+        self.rating = rating
+
+    def __eq__(self, other):
+        if not other is Book:
+            return False
+        return self.isbn == other.isbn
+
+    def __ne__(self, other):
+        return not __eq__(self, other)
+
+    def __hash__(self):
+        return self.isbn.hash()
+
+    @property
+    def book(self):
+        return self.__book
+
+    @property
+    def isbn(self):
+        return self.__isbn
+
+    @property
+    def user(self):
+        return self.__user
+
+    @property
+    def date(self):
+        return self.__date
+
+    @property
+    def rating(self):
+        return self.__rating
+
+    @rating.setter
+    def rating(self, rating):
+        if rating < REVIEW_MIN:
+            self.__rating = REVIEW_MIN
+        elif rating > REVIEW_MAX:
+            self.__rating = REVIEW_MAX
         else:
-            self.__review_gr = review_gr
+            self.__rating = rating
+
+
+"""
+Class: ReviewGoodreads
+Represents the reviews of a Book, from Goodreads. Just represents the number
+of reviews and the average score.
+"""
+class ReviewGoodreads():
+
+    def __init__(self, book, rating, num_reviews):
+        self.__book = book
+        self.__isbn = book.isbn
+        self.rating = rating
+        self.num_reviews = num_reviews
+
+    @property
+    def rating(self):
+        return self.__rating
+
+    @property
+    def book(self):
+        return self.__book
+
+    @property
+    def isbn(self):
+        return self.__isbn
+
+    @rating.setter
+    def rating(self, rating):
+        if rating < REVIEW_MIN:
+            self.__rating = REVIEW_MIN
+        elif rating > REVIEW_MAX:
+            self.__rating = REVIEW_MAX
+        else:
+            self.__rating = rating
+
+    @property
+    def num_reviews(self):
+        return self.__num_reviews
+
+    @num_reviews.setter
+    def rating(self, num_reviews):
+        if rating < 1:
+            self.__num_reviews = 1
+        else:
+            self.__num_reviews = num_reviews
 
 
 """
