@@ -7,6 +7,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from Book import *
 from User import *
+from Review import *
 
 
 # Flask Session key for holding the user ID of the user currently logged in
@@ -25,6 +26,7 @@ Session(app)
 # Initialize mock data instead of database, until database is ready
 init_books_data()
 init_users_data()
+init_reviews_data()
 
 
 """
@@ -57,10 +59,14 @@ def search():
 @app.route("/book", methods=["GET"])
 def book():
     # SHOW A SAMPLE BOOK, FOR NOW
-    book = get_book_by_isbn("0380795272")
+    isbn = "0380795272"
+    book = get_book_by_isbn(isbn)
+    review = get_review_by_book(book)
     return render_template("book.html",
-        book = book, rating = 3.00, rating_good_reads = 5.00, num_revs = 2,
-        num_revs_good_reads = 300)
+        book = book, rating = review.rating_br,
+        num_revs = review.num_revs_br,
+        rating_good_reads = review.review_gr.rating,
+        num_revs_good_reads = review.review_gr.num_reviews)
 
 
 @app.route("/login", methods=["GET"])

@@ -12,9 +12,18 @@ REVIEW_MIN = 0
 REVIEW_MAX = 5
 
 # Constants for accessing book reviews data in Book Review dictionary
-# These are for accesing review of a book for a given user
+# These are for accessing review of a book for a given user
 REVIEW = 0
 DATE = 1
+
+# Constants for accessing book reviews data in Goodreads dictionary
+# These are teh keys for accessing the data of a review of a book (by isbn)
+TITLE = "title"
+AUTHOR = "author"
+YEAR = "year"
+ISBN = "isbn"
+REVIEW_COUNT = "review_count"
+AVERAGE_SCORE = "average_score"
 
 
 """
@@ -54,20 +63,22 @@ review in the reviews dictionaries.
 """
 def get_review_by_book(book):
     review = Review(book, None)
-    # add Book Review reviews
+    # get Book Review reviews
     if book.isbn in reviews_bookreview.keys():
         # raw formatted (see reviews_bookreview dict)
         reviews_data_by_user = reviews_bookreview[book.isbn]
-        for username reviews_data_by_user.keys():
+        for username in reviews_data_by_user.keys():
             user = get_user(username)
+            rating = reviews_data_by_user[username][REVIEW]
+            date = reviews_data_by_user[username][DATE]
             review_br = ReviewBookReview(book, user, rating, date)
             review.add_review_br(review_br)
-    # add Goodreads review
+    # get Goodreads review average
     if book.isbn in reviews_goodreads.keys():
-        # JSON formatted
-        review_gr_json = reviews_bookreview[isbn]
-        rating = review_gr_json["average_score"]
-        num_reviews = review_gr_json["review_count"]
+        # JSON formatted (dict)
+        review_gr_json = reviews_goodreads[book.isbn]
+        rating = review_gr_json[AVERAGE_SCORE]
+        num_reviews = review_gr_json[REVIEW_COUNT]
         review_gr = ReviewGoodreads(book, rating, num_reviews)
         review.review_gr = review_gr
     return review
@@ -126,17 +137,34 @@ class Review():
 
     @property
     def reviews_br(self):
-        return self.__review_br
+        return self.__reviews_br
 
-    def add_review_br(review_br):
-        if review_br is ReviewBookReview:
-            if review_br not in reviews_br:
-                self.__reviews_br.add(review_br)
+    def add_review_br(self, review_br):
+        if review_br not in self.reviews_br:
+            self.reviews_br.add(review_br)
+
+    @property
+    def num_revs_br(self):
+        return len(self.reviews_br)
+
+    @property
+    def rating_br(self):
+        if self.num_revs_br == 0:
+            return 0
+        sum_ratings = 0
+        for review_br in self.reviews_br:
+            sum_ratings = sum_ratings + review_br.rating
+        return sum_ratings / self.num_revs_br
+
 
 
 """
 Class: ReviewBookReview
 Represents a review of a Book, from Book Review.
+Note: Since there are many reviews for a same book by different users, and
+that a user can review several books. The identity for an instance is given
+by a string formed by the isbn plus the username. This allows to check for
+identity and also allows to calculate a hash for any well-formed instance.
 """
 class ReviewBookReview():
 
@@ -148,15 +176,15 @@ class ReviewBookReview():
         self.rating = rating
 
     def __eq__(self, other):
-        if not other is Book:
-            return False
-        return self.isbn == other.isbn
+        key_self = self.isbn + self.user.username
+        key_other = other.isbn + other.user.username
+        return key_self == key_other
 
     def __ne__(self, other):
         return not __eq__(self, other)
 
     def __hash__(self):
-        return self.isbn.hash()
+        return (self.isbn + self.user.username).__hash__()
 
     @property
     def book(self):
@@ -202,16 +230,16 @@ class ReviewGoodreads():
         self.num_reviews = num_reviews
 
     @property
-    def rating(self):
-        return self.__rating
-
-    @property
     def book(self):
         return self.__book
 
     @property
     def isbn(self):
         return self.__isbn
+
+    @property
+    def rating(self):
+        return self.__rating
 
     @rating.setter
     def rating(self, rating):
@@ -227,8 +255,8 @@ class ReviewGoodreads():
         return self.__num_reviews
 
     @num_reviews.setter
-    def rating(self, num_reviews):
-        if rating < 1:
+    def num_reviews(self, num_reviews):
+        if num_reviews < 1:
             self.__num_reviews = 1
         else:
             self.__num_reviews = num_reviews
@@ -240,7 +268,7 @@ Initialization of mock data for reviews from Book Review webpage.
 def init_reviews_br_data():
     reviews_bookreview["0380795272"] = {
         "gonzalezjuan" : [2, datetime.datetime(2018, 6, 2, 23, 30, 14)],
-        "davidm" : [4, datetime.datetime(2010, 11, 4, 21, 12, 6)]
+        "davidm" : [3, datetime.datetime(2010, 11, 4, 21, 12, 6)]
     }
     reviews_bookreview["1416949658"] = {
         "javito" : [4, datetime.datetime(2011, 4, 15, 21, 12, 34)],
@@ -281,8 +309,7 @@ def init_reviews_br_data():
 Initialization of mock data for reviews from Goodreads webpage.
 """
 def init_reviews_gr_data():
-    reviews_goodreads["0380795272"] =
-"""
+    reviews_goodreads["0380795272"] = """
 {
     "title": "Krondor: The Betrayal",
     "author": "Raymond E. Feist",
@@ -290,10 +317,8 @@ def init_reviews_gr_data():
     "isbn": "0380795272",
     "review_count": 28,
     "average_score": 4.3
-}
-"""
-    reviews_goodreads["1416949658"] =
-"""
+}"""
+    reviews_goodreads["1416949658"] = """
 {
     "title": "The Dark Is Rising",
     "author": "Susan Cooper",
@@ -301,10 +326,8 @@ def init_reviews_gr_data():
     "isbn": "1416949658",
     "review_count": 34,
     "average_score": 3.8
-}
-    """
-    reviews_goodreads["1857231082"] =
-"""
+}"""
+    reviews_goodreads["1857231082"] = """
 {
     "title": "The Black Unicorn",
     "author": "Terry Brooks",
@@ -312,10 +335,8 @@ def init_reviews_gr_data():
     "isbn": "1857231082",
     "review_count": 25,
     "average_score": 4.1
-}
-"""
-    reviews_goodreads["0553803700"] =
-"""
+}"""
+    reviews_goodreads["0553803700"] = """
 {
     "title": "I, Robot",
     "author": "Isaac Asimov",
@@ -323,10 +344,8 @@ def init_reviews_gr_data():
     "isbn": "0553803700",
     "review_count": 90,
     "average_score": 4.8
-}
-"""
-    reviews_goodreads["080213825X"] =
-"""
+}"""
+    reviews_goodreads["080213825X"] = """
 {
     "title": "Four Blondes",
     "author": "Candace Bushnell",
@@ -334,10 +353,8 @@ def init_reviews_gr_data():
     "isbn": "080213825X",
     "review_count": 92,
     "average_score": 3.7
-}
-"""
-    reviews_goodreads["0375913750"] =
-"""
+}"""
+    reviews_goodreads["0375913750"] = """
 {
     "title": "Love, Stargirl",
     "author": "Jerry Spinelli",
@@ -345,21 +362,17 @@ def init_reviews_gr_data():
     "isbn": "0375913750",
     "review_count": 90,
     "average_score": 4.8
-}
-"""
-    reviews_goodreads["074349671X"] =
-"""
+}"""
+    reviews_goodreads["074349671X"] = """
 {
     "title": "The Tenth Circle",
-    "author": "Jodi Picoult"",
+    "author": "Jodi Picoult",
     "year": 2006,
     "isbn": "074349671X",
     "review_count": 13,
     "average_score": 2.8
-}
-"""
-    reviews_goodreads["0743454553"] =
-"""
+}"""
+    reviews_goodreads["0743454553"] = """
 {
     "title": "Vanishing Acts",
     "author": "Jodi Picoult",
@@ -367,10 +380,8 @@ def init_reviews_gr_data():
     "isbn": "0743454553",
     "review_count": 10,
     "average_score": 3.3
-}
-"""
-    reviews_goodreads["0765317508"] =
-"""
+}"""
+    reviews_goodreads["0765317508"] = """
 {
     "title": "Aztec",
     "author": "Gary Jennings",
@@ -378,10 +389,8 @@ def init_reviews_gr_data():
     "isbn": "0765317508",
     "review_count": 39,
     "average_score": 3.8
-}
-"""
-    reviews_goodreads["0142501085"] =
-"""
+}"""
+    reviews_goodreads["0142501085"] = """
 {
     "title": "Marlfox",
     "author": "Brian Jacques",
@@ -389,10 +398,8 @@ def init_reviews_gr_data():
     "isbn": "0142501085",
     "review_count": 37,
     "average_score": 4.1
-}
-"""
-    reviews_goodreads["1442468351"] =
-"""
+}"""
+    reviews_goodreads["1442468351"] = """
 {
     "title": "Lady Midnight",
     "author": "Cassandra Clare",
@@ -400,10 +407,8 @@ def init_reviews_gr_data():
     "isbn": "1442468351",
     "review_count": 80,
     "average_score": 4.1
-}
-"""
-    reviews_goodreads["1439152802"] =
-"""
+}"""
+    reviews_goodreads["1439152802"] = """
 {
     "title": "The Secret Keeper",
     "author": "Kate Morton",
@@ -411,10 +416,8 @@ def init_reviews_gr_data():
     "isbn": "1439152802",
     "review_count": 30,
     "average_score": 4.2
-}
-"""
-    reviews_goodreads["0399153942"] =
-"""
+}"""
+    reviews_goodreads["0399153942"] = """
 {
     "title": "The Afghan",
     "author": "Frederick Forsyth",
@@ -422,10 +425,8 @@ def init_reviews_gr_data():
     "isbn": "0399153942",
     "review_count": 50,
     "average_score": 4.1
-}
-"""
-    reviews_goodreads["0441017835"] =
-"""
+}"""
+    reviews_goodreads["0441017835"] = """
 {
     "title": "A Touch of Dead",
     "author": "Charlaine Harris",
@@ -433,9 +434,8 @@ def init_reviews_gr_data():
     "isbn": "0441017835",
     "review_count": 20,
     "average_score": 4.0
-}
-"""
-
-    # convert Goodreads reviews to JSON
+}"""
+    # convert Goodreads reviews from JSON string to JSON dict
     for isbn in reviews_goodreads.keys():
-        reviews_goodreads[isbn] = json.loads(reviews_goodreads[isbn])
+        review_json = json.loads(reviews_goodreads[isbn])
+        reviews_goodreads[isbn] = review_json
