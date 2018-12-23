@@ -162,7 +162,7 @@ class Review():
 Class: ReviewBookReview
 Represents a review of a Book, from Book Review.
 Note: Since there are many reviews for a same book by different users, and
-that a user can review several books. The identity for an instance is given
+that a user can review several books. The identity for an instance is given by
 the ISBN and the username. This allows to check for identity and also allows
 to calculate a hash for any well-formed instance.
 """
