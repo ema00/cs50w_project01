@@ -163,8 +163,8 @@ Class: ReviewBookReview
 Represents a review of a Book, from Book Review.
 Note: Since there are many reviews for a same book by different users, and
 that a user can review several books. The identity for an instance is given
-by a string formed by the isbn plus the username. This allows to check for
-identity and also allows to calculate a hash for any well-formed instance.
+the ISBN and the username. This allows to check for identity and also allows
+to calculate a hash for any well-formed instance.
 """
 class ReviewBookReview():
 
@@ -176,15 +176,16 @@ class ReviewBookReview():
         self.rating = rating
 
     def __eq__(self, other):
-        key_self = self.isbn + self.user.username
-        key_other = other.isbn + other.user.username
-        return key_self == key_other
+        isbn_equality = (self.isbn == other.isbn)
+        username_equality = (self.user.username == other.user.username)
+        return isbn_equality and isbn_equality
 
     def __ne__(self, other):
         return not __eq__(self, other)
 
     def __hash__(self):
-        return (self.isbn + self.user.username).__hash__()
+        # hash calculation using a Tuple, recommended way
+        return hash((self.isbn, self.user.username))
 
     @property
     def book(self):
