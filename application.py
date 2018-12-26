@@ -43,15 +43,19 @@ db = scoped_session(sessionmaker(bind=engine))
 @app.route("/")
 def index():
     if is_user_logged_in():
-        return render_template("index.html")
+        return render_template("index.html", books = None)
     else:
         return redirect("/login")
 
 
-@app.route("/search", methods=["POST"])
+@app.route("/search", methods=["GET", "POST"])
 def search():
     # Get form information.
     book_data = request.form.get("book")
+    # WORKING HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    books = search_books_containing(book_data)
+    return render_template("index.html", books = books)
+    # WORKING HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # FOR NOW, JUST REDIRECT TO INDEX
     return redirect("/")
 

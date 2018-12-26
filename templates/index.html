@@ -27,4 +27,12 @@
           <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
         </form>
     </div>
+
+    <div class="container text-center">
+        {% if books %}
+            {% for book in books %}
+                <p> {{ book.isbn }} - {{ book.title }} - {{ book.author }} </p>
+            {% endfor %}
+        {% endif %}
+    </div>
 {% endblock %}
