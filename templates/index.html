@@ -28,10 +28,14 @@
         </form>
     </div>
 
-    <div class="container text-center">
+    <div class="container text-center mt-4">
         {% if books %}
             {% for book in books %}
-                <p> {{ book.isbn }} - {{ book.title }} - {{ book.author }} </p>
+            <div class="form-row justify-content-center">
+              <div class="col-md-9 mb-3">
+                <a href="{{ url_for('book', isbn = book.isbn) }}"> ISBN: {{ book.isbn }} - Title: {{ book.title }} - Author: {{ book.author }} - Year: {{ book.year }} </a>
+              </div>
+            </div>
             {% endfor %}
         {% endif %}
     </div>

@@ -59,6 +59,8 @@ def search_books_containing(string):
     if string is None:
         return result
     string = string.lstrip().rstrip().lower()
+    if string == "":
+        return result
     for isbn in books.keys():
         if book_contains(isbn, string):
             title = books[isbn][TITLE]

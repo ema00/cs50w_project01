@@ -50,20 +50,18 @@ def index():
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
-    # Get form information.
-    book_data = request.form.get("book")
-    # WORKING HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    books = search_books_containing(book_data)
-    return render_template("index.html", books = books)
-    # WORKING HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # FOR NOW, JUST REDIRECT TO INDEX
-    return redirect("/")
+    if is_user_logged_in():
+        book_data = request.form.get("book")
+        books = search_books_containing(book_data)
+        return render_template("index.html", books = books)
+    else:
+        return redirect("/login")
 
 
-@app.route("/book", methods=["GET"])
-def book():
+@app.route("/book/<string:isbn>", methods=["GET"])
+def book(isbn):
     # SHOW A SAMPLE BOOK, FOR NOW
-    isbn = "0380795272"
+    #isbn = "0380795272"
     book = get_book_by_isbn(isbn)
     review = get_review_by_book(book)
     return render_template("book.html",
