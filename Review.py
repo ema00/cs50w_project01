@@ -85,7 +85,7 @@ def get_review_by_book(book):
 
 
 """
-Adds a review for a Book, by a specific User, to the dictionary thet contains
+Adds a review for a Book, by a specific User, to the dictionary that contains
 reviews for Book Review website.
 Does not add the review if the book has already been added by the user.
 Does not add the review if the book or the user are None.

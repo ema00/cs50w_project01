@@ -65,6 +65,7 @@ def book(isbn):
     book = get_book_by_isbn(isbn)
     review = get_review_by_book(book)
     return render_template("book.html",
+        reviews_br = review.reviews_br,
         book = book, rating = review.rating_br,
         num_revs = review.num_revs_br,
         rating_good_reads = review.review_gr.rating,

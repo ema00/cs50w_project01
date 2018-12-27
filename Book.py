@@ -8,7 +8,7 @@ YEAR = 2
 """
 Dictionary containing book data. Information is stored as:
     key: ISBN
-    value: list(book name, author, year)
+    value: list(title, author, year)
 Usage: books["0380795272"][TITLE]
 """
 books = dict()
