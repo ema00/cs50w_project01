@@ -60,16 +60,17 @@ def search():
 
 @app.route("/book/<string:isbn>", methods=["GET"])
 def book(isbn):
-    # SHOW A SAMPLE BOOK, FOR NOW
-    #isbn = "0380795272"
-    book = get_book_by_isbn(isbn)
-    review = get_review_by_book(book)
-    return render_template("book.html",
-        reviews_br = review.reviews_br,
-        book = book, rating = review.rating_br,
-        num_revs = review.num_revs_br,
-        rating_good_reads = review.review_gr.rating,
-        num_revs_good_reads = review.review_gr.num_reviews)
+    if is_user_logged_in():
+        book = get_book_by_isbn(isbn)
+        review = get_review_by_book(book)
+        return render_template("book.html",
+            reviews_br = review.reviews_br,
+            book = book, rating = review.rating_br,
+            num_revs = review.num_revs_br,
+            rating_good_reads = review.review_gr.rating,
+            num_revs_good_reads = review.review_gr.num_reviews)
+    else:
+        return redirect("/login")
 
 
 @app.route("/login", methods=["GET"])
